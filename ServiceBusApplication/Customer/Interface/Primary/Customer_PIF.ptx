@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:templateEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config">
+    <con:coreEntry>
+        <con:binding type="SOAP" isSoap12="true" xsi:type="con:AnyWsdlSoapBindingType"/>
+    </con:coreEntry>
+    <con:router errorHandler="error-N3f57c7ff.N52f27912.0.15e30dd4564.N7ff6">
+        <con:pipeline type="request" name="request-N3f57c7ff.N52f27912.0.15e30dd4564.N8000" xmlns:con1="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+            <con:stage id="N3f57c7ff.N52f27912.1.15e30e1afa7.N8000" name="Log">
+                <con:context/>
+                <con:actions>
+                    <con1:log>
+                        <con2:id>_ActionId-N3f57c7ff.N52f27912.0.15e30dd4564.N7ffa</con2:id>
+                        <con1:logLevel>debug</con1:logLevel>
+                        <con1:expr>
+                            <con2:xqueryText>concat('CHECK IN :: ',
+$inbound/ctx:service/ctx:providerName,' ',$inbound/ctx:service/ctx:operation)</con2:xqueryText>
+                        </con1:expr>
+                        <con1:message>Check IN log.</con1:message>
+                    </con1:log>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N3f57c7ff.N52f27912.0.15e30dd4564.N7ee3" name="Generate Transaction ID">
+                <con:context/>
+                <con:actions>
+                    <con3:assign varName="TransactionId" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con2:id>_ActionId-N3f57c7ff.N52f27912.0.15e30dd4564.N7ee2</con2:id>
+                        <con3:expr>
+                            <con2:xqueryText>fn-bea:uuid()</con2:xqueryText>
+                        </con3:expr>
+                    </con3:assign>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N3f57c7ff.N52f27912.0.15e30dd4564.N7fff" xmlns:con1="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+            <con:stage id="N3f57c7ff.N52f27912.1.15e30e1afa7.N7fff" name="Log">
+                <con:context/>
+                <con:actions>
+                    <con1:log>
+                        <con2:id>_ActionId-N3f57c7ff.N52f27912.0.15e30dd4564.N7ff7</con2:id>
+                        <con1:logLevel>debug</con1:logLevel>
+                        <con1:expr>
+                            <con2:xqueryText>concat('CHECK OUT :: ',
+$inbound/ctx:service/ctx:providerName,' ',$inbound/ctx:service/ctx:operation)</con2:xqueryText>
+                        </con1:expr>
+                        <con1:message>Check OUT log.</con1:message>
+                    </con1:log>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="error" name="error-N3f57c7ff.N52f27912.0.15e30dd4564.N7ff6" xmlns:con1="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+            <con:stage id="N3f57c7ff.N52f27912.1.15e30e1afa7.N7ffe" name="Error Handling">
+                <con:context/>
+                <con:actions>
+                    <con1:log>
+                        <con2:id>_ActionId-N3f57c7ff.N52f27912.0.15e30dd4564.N7ff2</con2:id>
+                        <con1:logLevel>debug</con1:logLevel>
+                        <con1:expr>
+                            <con2:xqueryText>concat('Interface ERROR :: ',
+fn-bea:serialize($fault))</con2:xqueryText>
+                        </con1:expr>
+                    </con1:log>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:pipeline-node name="Interface Log Stage" xmlns:con1="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+                <con:request>request-N3f57c7ff.N52f27912.0.15e30dd4564.N8000</con:request>
+                <con:response>response-N3f57c7ff.N52f27912.0.15e30dd4564.N7fff</con:response>
+            </con:pipeline-node>
+            <con:route-node name="Route to CORE" id="N3f57c7ff.N52f27912.1.15e30e1afa7.N7ffd" xmlns:con1="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+                <con:context/>
+                <con:actions>
+                    <con3:dynamic-route xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                        <con2:id>_ActionId-N3f57c7ff.N52f27912.0.15e30dd4564.N7e46</con2:id>
+                        <con3:service>
+                            <con2:xqueryText>''</con2:xqueryText>
+                        </con3:service>
+                        <con3:outboundTransform/>
+                        <con3:responseTransform/>
+                    </con3:dynamic-route>
+                </con:actions>
+            </con:route-node>
+        </con:flow>
+        <con:shared-variables>
+            <con:variable>TransactionId</con:variable>
+        </con:shared-variables>
+    </con:router>
+</con:templateEntry>

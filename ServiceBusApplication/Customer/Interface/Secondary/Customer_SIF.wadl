@@ -1,0 +1,40 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<application xmlns:soa="http://www.oracle.com/soa/rest" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ebmns_Create="http://www.globallogic.com/EBM/Customer/Create/v1" xmlns:ebmns_Get="http://www.globallogic.com/EBM/Customer/Get/v1" xmlns="http://wadl.dev.java.net/2009/02">
+   <doc title="Customer_SIF">RestService</doc>
+   <grammars>
+      <xs:schema xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.globallogic.com/ESC/Customer/v1" xmlns:ebmns_Create="http://www.globallogic.com/EBM/Customer/Create/v1" xmlns:ebmns_Update="http://www.globallogic.com/EBM/Customer/Update/v1" xmlns:ebmns_Publish="http://www.globallogic.com/EBM/Customer/Publish/v1" xmlns:ebmns_Get="http://www.globallogic.com/EBM/Customer/Get/v1">
+         <xs:import namespace="http://www.globallogic.com/EBM/Customer/Create/v1"
+                    schemaLocation="../Primary/Contract/Create_Customer_v1.xsd"/>
+         <xs:import namespace="http://www.globallogic.com/EBM/Customer/Get/v1"
+                    schemaLocation="../Primary/Contract/Get_Customer_v1.xsd"/>
+      </xs:schema>
+   </grammars>
+   <resources>
+      <resource path="/Get">
+         <method name="POST" soa:wsdlOperation="Get">
+            <request>
+               <representation mediaType="application/json" element="cns:Get_Customer_REQ" xmlns:cns="http://www.globallogic.com/EBM/Customer/Get/v1"/>
+            </request>
+            <response status="200">
+               <representation mediaType="application/json" element="cns:Get_Customer_RSP" xmlns:cns="http://www.globallogic.com/EBM/Customer/Get/v1"/>
+            </response>
+            <response status="400" soa:wsdlFaultName="DefaultFault">
+               <representation mediaType="application/xml" element="cns:Get_Customer_FRSP" xmlns:cns="http://www.globallogic.com/EBM/Customer/Get/v1"/>
+            </response>
+         </method>
+      </resource>
+      <resource path="/Create">
+         <method name="POST" soa:wsdlOperation="Create">
+            <request>
+               <representation mediaType="application/json" element="cns:Create_Customer_REQ" xmlns:cns="http://www.globallogic.com/EBM/Customer/Create/v1"/>
+            </request>
+            <response status="200">
+               <representation mediaType="application/json" element="cns:Create_Customer_RSP" xmlns:cns="http://www.globallogic.com/EBM/Customer/Create/v1"/>
+            </response>
+            <response status="400" soa:wsdlFaultName="DefaultFault">
+               <representation mediaType="application/xml" element="cns:Create_Customer_FRSP" xmlns:cns="http://www.globallogic.com/EBM/Customer/Create/v1"/>
+            </response>
+         </method>
+      </resource>
+   </resources>
+</application>
