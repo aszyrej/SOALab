@@ -12,8 +12,6 @@
             <con:snippetVersion>1.0</con:snippetVersion>
         </con:xqConfiguration>
     </con:coreEntry>
-    <con:router>
-        <con:template-overrides/>
-    </con:router>
+    <con:router/>
     <con:template ref="Customer/Interface/Primary/Customer_PIF"/>
 </con:pipelineEntry>

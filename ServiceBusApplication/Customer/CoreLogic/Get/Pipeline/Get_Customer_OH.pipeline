@@ -28,17 +28,6 @@ $inbound/ctx:service/ctx:providerName,' ',$inbound/ctx:service/ctx:operation)</c
                     </con1:log>
                 </con:actions>
             </con:stage>
-            <con:stage id="_StageId-N3f57c7ff.N52f27912.0.15e30dd4564.N7fe1" name="Generate Transaction ID">
-                <con:context/>
-                <con:actions>
-                    <con3:assign varName="TransactionId">
-                        <con2:id>_ActionId-N3f57c7ff.N52f27912.0.15e30dd4564.N7fde</con2:id>
-                        <con3:expr>
-                            <con2:xqueryText>fn-bea:uuid()</con2:xqueryText>
-                        </con3:expr>
-                    </con3:assign>
-                </con:actions>
-            </con:stage>
         </con:pipeline>
         <con:pipeline type="response" name="response-N3f57c7ff.N52f27912.0.15e30dd4564.N7fff">
             <con:stage id="_StageId-N3f57c7ff.N52f27912.0.15e30dd4564.N7ffd" name="Log">
@@ -72,22 +61,13 @@ fn-bea:serialize($fault))</con2:xqueryText>
             </con:stage>
         </con:pipeline>
         <con:flow>
-            <con:pipeline-node name="Interface Log Stage">
+            <con:pipeline-node name="Operation Handler Log Stage">
                 <con:request>request-N3f57c7ff.N52f27912.0.15e30dd4564.N8000</con:request>
                 <con:response>response-N3f57c7ff.N52f27912.0.15e30dd4564.N7fff</con:response>
             </con:pipeline-node>
             <con:route-node name="Route to CORE">
                 <con:context/>
-                <con:actions>
-                    <con4:dynamic-route>
-                        <con2:id>_ActionId-N3f57c7ff.N52f27912.0.15e30dd4564.N7eac</con2:id>
-                        <con4:service>
-                            <con2:xqueryText>concat($Service,'/CoreLogic/',$operation,'_',$Service,'_OH.pipeline')</con2:xqueryText>
-                        </con4:service>
-                        <con4:outboundTransform/>
-                        <con4:responseTransform/>
-                    </con4:dynamic-route>
-                </con:actions>
+                <con:actions></con:actions>
             </con:route-node>
         </con:flow>
         <con:shared-variables>

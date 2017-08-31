@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Get_Customer_OH"
+             targetNamespace="http://xmlns.oracle.com/Customer_v1/Get_Customer_OH/Get_Customer_OH"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:client="http://xmlns.oracle.com/Customer_v1/Get_Customer_OH/Get_Customer_OH"
+             xmlns:ns1="http://www.globallogic.com/EBM/Customer/Get/v1"
+             xmlns:ns2="http://www.globallogic.com/ESC/Customer/v1"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+	<wsdl:import namespace="http://www.globallogic.com/ESC/Customer/v1" location="Customer_v1.wsdl" />
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	TYPE DEFINITION - List of services participating in this BPEL process
+	The default output of the BPEL designer uses strings as input and 
+	output to the BPEL Process. But you can define or import any XML 
+	Schema type and use them as part of the message types.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->   
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MESSAGE TYPE DEFINITION - Definition of the message types used as 
+	part of the port type defintions
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->      
+	<wsdl:message name="Get_Customer_OHRequestMessage">
+		<wsdl:part name="payload" element="ns1:Get_Customer_REQ" />
+	</wsdl:message>
+	<wsdl:message name="Get_Customer_OHResponseMessage">
+		<wsdl:part name="payload" element="ns1:Get_Customer_RSP" />
+	</wsdl:message>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PORT TYPE DEFINITION - A port type groups a set of operations into
+	a logical service unit.
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<!-- portType implemented by the Get_Customer_OH BPEL process -->
+	<wsdl:portType name="Get_Customer_OH">
+		<wsdl:operation name="process">
+			<wsdl:input  message="client:Get_Customer_OHRequestMessage" />
+			<wsdl:output message="client:Get_Customer_OHResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	PARTNER LINK TYPE DEFINITION
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ --> 
+	<plnk:partnerLinkType name="Get_Customer_OH">
+		<plnk:role name="Get_Customer_OHProvider" portType="client:Get_Customer_OH"/>
+	</plnk:partnerLinkType>
+</wsdl:definitions>

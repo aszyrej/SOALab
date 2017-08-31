@@ -1,0 +1,73 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer 
+  
+  Created: Thu Aug 31 02:45:16 ART 2017
+  Author:  alexander.szyrej
+  Type: BPEL 2.0 Process
+  Purpose: Synchronous BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="Get_Customer_OH"
+               targetNamespace="http://xmlns.oracle.com/Customer_v1/Get_Customer_OH/Get_Customer_OH"
+               xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+               xmlns:client="http://xmlns.oracle.com/Customer_v1/Get_Customer_OH/Get_Customer_OH"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:ui="http://xmlns.oracle.com/soa/designer"
+               xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+         xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+  <bpelx:inlineSubProcess name="Log">
+    <sequence name="Sequence1">
+      <empty name="Marshal_Log_Data"/>
+      <empty name="Invoke_DB_Log_Procedure"/>
+    </sequence>
+  </bpelx:inlineSubProcess>
+  <import ui:processWSDL="true" namespace="http://xmlns.oracle.com/Customer_v1/Get_Customer_OH/Get_Customer_OH" location="../WSDLs/Get_Customer_OH.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <!-- 
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        PARTNERLINKS                                                      
+        List of services participating in this BPEL process               
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    --> 
+  <partnerLinks>
+    <!-- 
+      The 'client' role represents the requester of this service. It is 
+      used for callback. The location and correlation information associated
+      with the client role are automatically set using WS-Addressing.
+    -->
+    <partnerLink name="get_customer_oh_client" partnerLinkType="client:Get_Customer_OH" myRole="Get_Customer_OHProvider"/>
+  </partnerLinks>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      VARIABLES                                                        
+      List of messages and XML documents used within this BPEL process 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <variables>
+    <!-- Reference to the message passed as input during initiation -->
+    <variable name="inputVariable" messageType="client:Get_Customer_OHRequestMessage"/>
+
+    <!-- Reference to the message that will be returned to the requester-->
+    <variable name="outputVariable" messageType="client:Get_Customer_OHResponseMessage"/>
+  </variables>
+
+  <!-- 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC                                               
+     Set of activities coordinating the flow of messages across the    
+     services integrated within this business process                  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <sequence name="main">
+
+    <!-- Receive input from requestor. (Note: This maps to operation defined in Get_Customer_OH.wsdl) -->
+    <receive name="receiveInput" partnerLink="get_customer_oh_client" portType="client:Get_Customer_OH" operation="process" variable="inputVariable" createInstance="yes"/>
+    <extensionActivity>
+      <bpelx:call name="Log" target="Log"/>
+    </extensionActivity>
+    <!-- Generate reply to synchronous request -->
+    <reply name="replyOutput" partnerLink="get_customer_oh_client" portType="client:Get_Customer_OH" operation="process" variable="outputVariable"/>
+  </sequence>
+</process>
