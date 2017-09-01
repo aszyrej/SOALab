@@ -17,10 +17,28 @@
                xmlns:ui="http://xmlns.oracle.com/soa/designer"
                xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
          xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
-  <bpelx:inlineSubProcess name="Log">
+  <bpelx:inlineSubProcess name="Call_Service_B">
+    <faultHandlers>
+      <catchAll>
+        <empty name="Assign_Variables"/>
+      </catchAll>
+    </faultHandlers>
     <sequence name="Sequence1">
-      <empty name="Marshal_Log_Data"/>
-      <empty name="Invoke_DB_Log_Procedure"/>
+      <empty name="Transform_MSG_to_B"/>
+      <empty name="Invoke_B"/>
+    </sequence>
+  </bpelx:inlineSubProcess>
+  <bpelx:inlineSubProcess name="Call_Service">
+    <sequence name="Sequence1">
+      <empty name="Transform_MSG_to_Service"/>
+      <empty name="Invoke_Service"/>
+      <empty name="AssignVariables"/>
+    </sequence>
+  </bpelx:inlineSubProcess>
+  <bpelx:inlineSubProcess name="Error_Processing">
+    <sequence name="Sequence1">
+      <empty name="Invoke_ErrorManager"/>
+      <empty name="Marshal_ERROR_RSP"/>
     </sequence>
   </bpelx:inlineSubProcess>
   <import ui:processWSDL="true" namespace="http://xmlns.oracle.com/Customer_v1/Get_Customer_OH/Get_Customer_OH" location="../WSDLs/Get_Customer_OH.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
@@ -52,7 +70,16 @@
     <!-- Reference to the message that will be returned to the requester-->
     <variable name="outputVariable" messageType="client:Get_Customer_OHResponseMessage"/>
   </variables>
-
+  <faultHandlers>
+    <catchAll>
+      <sequence name="Sequence2">
+        <empty name="Marshall_Unexpected_Error"/>
+        <extensionActivity>
+          <bpelx:call name="Error_Processing" target="Error_Processing"/>
+        </extensionActivity>
+      </sequence>
+    </catchAll>
+  </faultHandlers>
   <!-- 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      ORCHESTRATION LOGIC                                               
@@ -60,14 +87,63 @@
      services integrated within this business process                  
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   -->
-  <sequence name="main">
+  <sequence name="Sync_Stage">
 
     <!-- Receive input from requestor. (Note: This maps to operation defined in Get_Customer_OH.wsdl) -->
-    <receive name="receiveInput" partnerLink="get_customer_oh_client" portType="client:Get_Customer_OH" operation="process" variable="inputVariable" createInstance="yes"/>
-    <extensionActivity>
-      <bpelx:call name="Log" target="Log"/>
-    </extensionActivity>
+    <scope name="SyncStage">
+      <faultHandlers>
+        <catchAll><sequence name="Sequence3"><empty name="Marshall_Validation_Error"
+                                                         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"/><extensionActivity xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+      <bpelx:call name="Error_Processing" target="Error_Processing"
+                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension"/>
+   </extensionActivity></sequence></catchAll>
+      </faultHandlers>
+      <sequence name="Sync">
+        <receive name="receiveInput" partnerLink="get_customer_oh_client" portType="client:Get_Customer_OH"
+                 operation="process" variable="inputVariable" createInstance="yes"/>
+        <validate name="Validate_Incoming_MSG" variables="inputVariable"/>
+        <reply name="replyOutput" partnerLink="get_customer_oh_client" portType="client:Get_Customer_OH"
+               operation="process" variable="outputVariable"/>
+      </sequence>
+    </scope>
+    <if name="CheckProvider">
+      <documentation>
+        <![CDATA[Provider A]]>
+      </documentation>
+      <extensionActivity>
+        <bpelx:call name="Call_Service_A" target="Call_Service"/>
+      </extensionActivity>
+      <else>
+        <documentation>
+          <![CDATA[Provider B]]>
+        </documentation>
+        <extensionActivity>
+          <bpelx:call name="Call_Service_B" target="Call_Service_B"/>
+        </extensionActivity>
+      </else>
+    </if>
     <!-- Generate reply to synchronous request -->
-    <reply name="replyOutput" partnerLink="get_customer_oh_client" portType="client:Get_Customer_OH" operation="process" variable="outputVariable"/>
+    <scope name="AfterCall">
+      <if name="CheckErrors">
+        <documentation>
+          <![CDATA[Technical ERROR]]>
+        </documentation><sequence name="Sequence4"><empty name="Marshal_Tech_ERROR"/><extensionActivity xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+      <bpelx:call name="Error_Processing" target="Error_Processing"
+                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension"/>
+   </extensionActivity></sequence><elseif>
+          <documentation>
+            <![CDATA[Functional ERROR]]>
+          </documentation><sequence name="Sequence5"><empty name="Marshal_Functional_ERROR"/><extensionActivity xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+      <bpelx:call name="Error_Processing" target="Error_Processing"
+                  xmlns:bpelx="http://schemas.oracle.com/bpel/extension"/>
+   </extensionActivity></sequence></elseif>
+        <else>
+          <documentation>
+            <![CDATA[OK]]>
+          </documentation>
+          <empty name="Empty"/>
+        </else>
+      </if>
+    </scope>
   </sequence>
 </process>

@@ -4,11 +4,20 @@
    <annotationfile/>
    <iconize/>
    <partnerlink_locations>
-      <partnerlink name="get_customer_oh_client" x="0" y="189" side="left"/>
+      <partnerlink name="get_customer_oh_client" x="0" y="231" side="left"/>
    </partnerlink_locations>
-   <graph_layout viewport="0,119,904,307" show_swimlanes="true">
+   <graph_layout viewport="0,0,904,292" show_swimlanes="true">
       <layout_item collapsed="false" xpath="/process" type="process" showhandlers="true"/>
+      <layout_item collapsed="false" xpath="/process/faultHandlers/catchAll" type="catchall"/>
+      <layout_item collapsed="false" xpath="/process/faultHandlers/catchAll/sequence" type="sequence"/>
       <layout_item collapsed="false" xpath="/process/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope[1]" type="scope" showhandlers="true"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope[1]/faultHandlers/catchAll" type="catchall"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope[1]/faultHandlers/catchAll/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope[1]/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope[2]" type="scope" showhandlers="true"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope[2]/if/sequence" type="sequence"/>
+      <layout_item collapsed="false" xpath="/process/sequence/scope[2]/if/elseif/sequence" type="sequence"/>
    </graph_layout>
    <bookmarks/>
 </graphics>
